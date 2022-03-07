@@ -1,16 +1,26 @@
-# This is a sample Python script.
+import telebot
+import traceback
+import requests
+import schedule
+import datetime
+import time
+from multiprocessing import *
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+TOKEN = ""
+
+bot = telebot.TeleBot(TOKEN)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+@bot.message_handler(commands=['start', 'help'])
+def start(message: telebot.types.Message):
+    busers = open("data/users.txt").read()
+
+    with open("data/users.txt", "a") as f:
+        if str(message.chat.id) not in busers:
+            f.write(str(message.chat.id) + "\n")
+
+    bot.send_message(message.chat.id, "Напишите - '/курс', чтобы получить курсы валют от ЦБ")
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    bot.polling(none_stop=True)
