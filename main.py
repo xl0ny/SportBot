@@ -19,7 +19,7 @@ def start(message: telebot.types.Message):
         if str(message.chat.id) not in busers:
             f.write(str(message.chat.id) + "\n")
 
-    bot.send_message(message.chat.id, "Напишите - '/курс', чтобы получить курсы валют от ЦБ")
+    bot.send_message(message.chat.id, "Привет, это спорт бот !")
 
 
 if __name__ == '__main__':
