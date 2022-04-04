@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 def class_no_id(tag):
@@ -26,6 +27,33 @@ def get_mathces():
     for i in films:
         print(i.text.replace("\n", ""))
 
+def main_component():
+    URL = "https://odds.ru/football/"
+    request = requests.get(URL)
+    soup = BeautifulSoup(request.text, "html.parser")
+    films = soup.findAll('div', class_='main-component-tabs home-match-list')
+    print(films)
+    for i in films:
+        film = i.find('b')
+        print(film)
 
-get_teams()
-get_mathces()
+def new_get_maches():
+    odin = []
+    dva = []
+    URL = "https://odds.ru/football/"
+    request = requests.get(URL)
+    soup = BeautifulSoup(request.text, "html.parser")
+    films = soup.findAll('div', class_='tab-contents')
+    flag = 0
+    for i in films:
+        for j in i.findAll('b'):
+            flag += 1
+            if flag % 2 == 0:
+                odin.append(re.split('<|>', str(j))[-3])
+            else:
+                dva.append(re.split('<|>', str(j))[-3])
+    for i in range(len(odin)):
+        print(dva[i] + " : " + odin[i])
+
+new_get_maches()
+# get_teams()
