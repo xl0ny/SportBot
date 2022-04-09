@@ -5,6 +5,7 @@ import schedule
 import datetime
 import time
 from multiprocessing import *
+import json
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -13,11 +14,13 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start(message: telebot.types.Message):
-    users = open("data/users.txt").read()
-
-    with open("data/users.txt", "a") as f:
-        if str(message.chat.id) not in users:
-            f.write(str(message.chat.id) + "\n")
+    with open('data/users.json') as f:
+        users = json.load(f)
+    if str(message.chat.id) not in users:
+        users[str(message.chat.id)] = {"team": "",
+                                  "period": ""}
+    with open('data/users.json', 'w') as file:
+        json.dump(users, file)
 
     bot.send_message(message.chat.id, "Привет, это спорт бот !")
 
@@ -30,23 +33,31 @@ def help(message: telebot.types.Message):
 
 
 @bot.message_handler(commands=['timer'])
-def set_t(message: telebot.types.Message):
+def set_timer(message: telebot.types.Message):
     pass
 
 
 @bot.message_handler(commands=['set_team'])
-def unset_t(message: telebot.types.Message):
-    pass
+def set_team(message: telebot.types.Message):
+    team = str(message.text)[9:]
+    with open('data/users.json') as f:
+        users = json.load(f)
+    print(users)
+    users[str(message.chat.id)] = {"team": team,
+                              "period": ""}
+    print(users)
+    with open('data/users.json', 'w') as file:
+        json.dump(users, file)
 
 
 def start_process():  # Запуск Process
-    p1 = Process(target=Evr.start_schedule(), args=()).start()
+    p1 = Process(target=Evr.start_schedule, args=()).start()
 
 
 class Evr():
     def start_schedule():  # Запуск schedule
         ######Параметры для schedule######
-        schedule.every(5).seconds.do(Evr.send_to_all)
+        schedule.every(1).hour.do(Evr.send_to_all)
         ##################################
 
         while True:  # Запуск цикла
@@ -54,8 +65,10 @@ class Evr():
             time.sleep(1)
 
     def send_to_all():
-        for i in open('data/users.txt'):
-            bot.send_message(int(i.strip()), "smth")
+        with open('data/users.json') as f:
+            users = json.load(f)
+        for i in users:
+            bot.send_message(int(i), "smth")
 
 
 # while True:
@@ -67,4 +80,3 @@ if __name__ == '__main__':
         bot.polling(none_stop=True)
     except:
         pass
-
