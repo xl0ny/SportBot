@@ -256,6 +256,7 @@ def football():
 
     # for i in films:
     #     print(i.findAll(class_='table-tournaments__title table-tournaments__title_big'))
+    print(films)
     for i in films:
 
         for j in i.findAll(class_='table-tournaments__title table-tournaments__title_big'):
@@ -617,6 +618,9 @@ def basketball():
         print(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} ')
         print(f'Лучшая контора для ставки на ничью: {dicktator[nichya]}')
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
-# football()
+
+
+
+football()
 # hockey()
 # basketball()
