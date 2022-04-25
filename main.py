@@ -71,9 +71,6 @@ class Evr():
             bot.send_message(int(i), "smth")
 
 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
 if __name__ == '__main__':
     start_process()
     try:
