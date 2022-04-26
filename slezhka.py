@@ -125,6 +125,8 @@ def get_news(team):
                 'strong', '').replace('/', '')
             print(u)
 
+def get_teams():
+    return [spain, england, braziliya, france, gollandia, italia, portugalia, switzerland]
 
-get_news(france["Брест"])
+# get_news(france["Брест"])
 # get_news(england["Ливерпуль"])
