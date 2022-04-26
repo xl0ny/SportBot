@@ -20,7 +20,6 @@ cntrs = {"Испания": slezhka.spain,
         "Португалия": slezhka.portugalia,
         "Швейцария": slezhka.switzerland,
         "Россия": slezhka.russia}
-all_teams = []
 
 @bot.message_handler(commands=['start'])
 def start(message: telebot.types.Message):
@@ -85,8 +84,10 @@ def handle_text(message):
         um.row(cntr_mas[6], cntr_mas[7])
         um.row(cntr_mas[8], cntr_mas[9])
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
-    elif any([True for i in list(cntrs.items()) if message.text in i]):
+    elif message.text in slezhka.all_teams:
         print(1)
+        for i in slezhka.get_news(slezhka.all_teams[message.text])[:4]:
+            bot.send_message(message.chat.id, i)
 
 
 
