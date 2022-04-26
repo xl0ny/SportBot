@@ -93,6 +93,25 @@ switzerland = {"Базель": "fc-basel",
               "Цюрих": "zurich",
               }
 
+
+russia = {"Зенит Санкт-Петербург": "zenit",
+              "Краснодар": "krasnodar",
+              "ЦСКА Москва": "cska",
+              "Ростов": "rostov",
+              "Арсенал Тула": "arsenal-tula ",
+              "Локомотив": "lokomotiv",
+              "Спартак": "spartak",
+              "Уфа": "ufa",
+              "Тамбов": "fc-tambov",
+              "Динамо": "dynamo",
+              "Оренбург": "orenburg",
+              "Урал": "ural",
+              "Ахмат": "akhmat",
+              "Сочи": "fc-sochi",
+              "Рубин Казань": "rubin",
+              "Крылья Советов Самара": "krylia-sovetov"
+              }
+
 def get_news(team):
     URL = f"https://www.sports.ru/{team}/news/"
     request = requests.get(URL)
