@@ -6,11 +6,21 @@ import datetime
 import time
 from multiprocessing import *
 import json
+import slezhka
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
 bot = telebot.TeleBot(TOKEN)
-
+cntrs = {"Испания": slezhka.spain,
+        "Англия": slezhka.england,
+        "Бразилия": slezhka.braziliya,
+        "Франция": slezhka.france,
+        "Голландия": slezhka.gollandia,
+        "Италия": slezhka.italia,
+        "Португалия": slezhka.portugalia,
+        "Швейцария": slezhka.switzerland,
+        "Россия": slezhka.russia}
+all_teams = []
 
 @bot.message_handler(commands=['start'])
 def start(message: telebot.types.Message):
@@ -62,9 +72,24 @@ def handle_text(message):
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Испания", "Англия", "Бразилия")
         um.row("Франция", "Голландия", "Италия")
-        um.row("Португалия", "Швейцария")
+        um.row("Португалия", "Швейцария", "Россия")
+        bot.send_message(message.chat.id, "Выбери страну", reply_markup=um)
+    elif message.text in cntrs:
+        country = message.text
+        cntr_mas = list(cntrs[message.text])
+        print(list(cntrs.items()))
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row(cntr_mas[0], cntr_mas[1])
+        um.row(cntr_mas[2], cntr_mas[3])
+        um.row(cntr_mas[4], cntr_mas[5])
+        um.row(cntr_mas[6], cntr_mas[7])
+        um.row(cntr_mas[8], cntr_mas[9])
+        bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
+    elif any([True for i in list(cntrs.items()) if message.text in i]):
+        print(1)
 
-        bot.send_message(message.chat.id, "Привет, это спорт бот !", reply_markup=um)
+
+
 
 
 def start_process():  # Запуск Process
