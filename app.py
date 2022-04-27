@@ -605,11 +605,11 @@ def basketball():
             for j in ligaviy_dicktator_ligi:
                 if team_one[i] in ligaviy_dicktator_ligi[j]:
                     if not j in said:
-                        print(j)
+                        # print(j)
                         said.append(j)
         else:
             if not liga[0] in said:
-                print(liga[0])
+                # print(liga[0])
                 said.append(liga[0])
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')

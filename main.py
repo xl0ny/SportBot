@@ -7,6 +7,7 @@ import time
 from multiprocessing import *
 import json
 import slezhka
+import app
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -66,12 +67,13 @@ def set_team(message: telebot.types.Message):
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
     if message.text == "Коэфиценты сегодня":
-        bot.send_message(message.from_user.id, 'На')
+        bot.send_message(message.from_user.id, app.football())
     elif message.text == "Новости":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Испания", "Англия", "Бразилия")
         um.row("Франция", "Голландия", "Италия")
         um.row("Португалия", "Швейцария", "Россия")
+        um.row("/start")
         bot.send_message(message.chat.id, "Выбери страну", reply_markup=um)
     elif message.text in cntrs:
         country = message.text
@@ -83,6 +85,7 @@ def handle_text(message):
         um.row(cntr_mas[4], cntr_mas[5])
         um.row(cntr_mas[6], cntr_mas[7])
         um.row(cntr_mas[8], cntr_mas[9])
+        um.row("Новости")
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif message.text in slezhka.all_teams:
         print(1)
