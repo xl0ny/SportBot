@@ -5,7 +5,6 @@ import re
 import logging
 
 
-
 def class_no_id(tag):
     return tag.has_attr('class') and not tag.has_attr('id')
 
@@ -14,7 +13,6 @@ def class_no_id(tag):
 def get_teams():
     URL = "https://odds.ru/"
     request = requests.get(URL)
-
 
     soup = BeautifulSoup(request.text, "html.parser")
     films = soup.findAll('div', class_='table-tournaments__cell table-tournaments__cell_teams')
@@ -31,18 +29,13 @@ def get_mathces():
     # Число-ключ в словаре states —
     # втором параметре ConversationHandler'а.
 
-
     # Оно указывает, что дальше на сообщения от этого пользователя
     # должен отвечать обработчик states[1].
 
-
     # До этого момента обработчиков текстовых сообщений
-
 
     # для этого пользователя не существовало,
     # поэтому текстовые сообщения игнорировались.
-
-
 
     soup = BeautifulSoup(request.text, "html.parser")
 
@@ -53,7 +46,6 @@ def get_mathces():
 
 
 def main_component():
-
     URL = "https://odds.ru/football/"
     request = requests.get(URL)
     # Напишем соответствующие функции.
@@ -64,7 +56,6 @@ def main_component():
 
     films = soup.findAll('div', class_='main-component-tabs home-match-list')
     print(films)
-
 
     for i in films:
         film = i.find('b')
@@ -87,111 +78,12 @@ def second_component():
     # Определяем функцию-обработчик сообщений.
     # У неё два параметра, сам бот и класс updater, принявший сообщение.
 
-
-
     films = soup.findAll('div', class_='main-component-tabs home-match-list')
     print(films)
 
     for i in films:
         film = i.find('b')
         print(film)
-
-
-
-def chain():
-    ids = []
-    login, password = '12', 'sasad'
-
-
-logging.basicConfig(level=logging.INFO)
-sessionStorage = {}
-
-
-def handle_dialog(req, res):
-    user_id = req['session']['user_id']
-
-
-    if req['session']['new']:
-        sessionStorage[user_id] = {
-            'suggests': [
-
-                "Не хочу.",
-                "Не буду.",
-                "Отстань!",
-            ],
-            'elephant': True
-        }
-
-        res['response']['text'] = 'Привет! Купи слона!'
-        res['response']['buttons'] = get_suggests(user_id)
-        return
-
-
-    if req['request']['original_utterance'].lower() in [
-
-        'ладно',
-        'куплю',
-        'покупаю',
-        'хорошо',
-        'я покупаю',
-        'я куплю'
-    ]:
-        if sessionStorage[user_id]['elephant']:
-            res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!\n' + \
-                                      'https://market.yandex.ru/search?text=слон\тА теперь купи кролика!!!'
-            sessionStorage[user_id] = {
-                'suggests': [
-
-                    "Не хочу.",
-
-                    "Не буду.",
-
-                    "Отстань!",
-                ],
-                'elephant': False
-            }
-            res['response']['buttons'] = get_suggests(user_id)
-            return
-
-        else:
-
-            res['response'][
-                'text'] = 'Кролика можно найти на Яндекс.Маркете!\nhttps://market.yandex.ru/search?text=кролик'
-            res['response']['end_session'] = True
-            return
-
-    res['response']['text'] = \
-        f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
-    res['response']['buttons'] = get_suggests(user_id)
-
-
-def get_suggests(user_id):
-    session = sessionStorage[user_id]
-    suggests = [
-        {'title': suggest, 'hide': True}
-
-        for suggest in session['suggests'][:2]
-    ]
-    session['suggests'] = session['suggests'][1:]
-    sessionStorage[user_id] = session
-    if len(suggests) < 2:
-        if session['elephant']:
-            suggests.append({
-                "title": "Ладно",
-
-                "url": "https://market.yandex.ru/search?text=слон",
-
-                "hide": True
-
-            })
-        else:
-            suggests.append({
-                "title": "Ладно",
-                "url": "https://market.yandex.ru/search?text=кролик",
-                "hide": True
-            })
-
-    return suggests
 
 
 def big_heplper():
@@ -256,7 +148,7 @@ def football():
 
     # for i in films:
     #     print(i.findAll(class_='table-tournaments__title table-tournaments__title_big'))
-    print(films)
+    # print(films)
     for i in films:
 
         for j in i.findAll(class_='table-tournaments__title table-tournaments__title_big'):
@@ -264,7 +156,7 @@ def football():
         for j in i.findAll(class_='table-tournaments__row table-tournaments__row_content table-tournaments__row_bk'):
             # print(j.findAll(class_='table-tournaments__bookmaker-name bookmaker-logo'))
             for z in j.findAll(class_='table-tournaments__bookmaker-name bookmaker-logo'):
-               # print(i.find(class_='table-tournaments__title table-tournaments__title_big'))
+                # print(i.find(class_='table-tournaments__title table-tournaments__title_big'))
                 # print(z)
                 if len(sami_kontori_pri_pobede) == len(sami_kontori_pri_nichye) == len(sami_kontori_pri_proigrishe):
                     sami_kontori_pri_pobede.append(
@@ -280,7 +172,7 @@ def football():
                 main_flag += 1
                 if int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])):
                     ligaviy_flag += 1
-                    #print(liga[ligaviy_flag])
+                    # print(liga[ligaviy_flag])
                 if main_flag % 2 == 1:
                     team_one.append(re.split('"|<|>', str(z))[-3])
                 else:
@@ -312,7 +204,7 @@ def football():
             # print(j.findAll('b'))
     for m, j in enumerate(liga):
         ligaviy_dicktator[str(films).find(j)] = j
-        #print(ligaviy_dicktator[str(films).find(j)])
+        # print(ligaviy_dicktator[str(films).find(j)])
     for i in team_one:
         tima_num = 0
         flyaga = 0
@@ -341,7 +233,7 @@ def football():
         for j in ligaviy_dicktator_ligi:
             if team_one[i] in ligaviy_dicktator_ligi[j]:
                 if not j in said:
-                    print(j)
+                    # print(j)
                     said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
@@ -350,6 +242,7 @@ def football():
         print(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} ')
         print(f'Лучшая контора для ставки на ничью: {dicktator[nichya]}')
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
+
 
 def hockey():
     odin = []
@@ -403,7 +296,7 @@ def hockey():
                 # print(int(str(i).find(re.split('"|<|>', str(z))[-3])), int(str(i).find(liga[ligaviy_flag])), len(liga))
                 main_flag += 1
                 if ligaviy_flag + 1 < len(liga):
-                    #print(int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])))
+                    # print(int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])))
                     ligaviy_flag += 1
                 # print(liga[ligaviy_flag])
 
@@ -485,7 +378,6 @@ def hockey():
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
 
 
-
 def basketball():
     odin = []
     dva = []
@@ -538,7 +430,7 @@ def basketball():
                 # print(int(str(i).find(re.split('"|<|>', str(z))[-3])), int(str(i).find(liga[ligaviy_flag])), len(liga))
                 main_flag += 1
                 if ligaviy_flag + 1 < len(liga):
-                    #print(int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])))
+                    # print(int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])))
                     ligaviy_flag += 1
                 # print(liga[ligaviy_flag])
 
@@ -620,7 +512,6 @@ def basketball():
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
 
 
-
-football()
+# football()
 # hockey()
 # basketball()

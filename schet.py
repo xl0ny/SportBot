@@ -27,9 +27,6 @@ import logging
 #         print('нет активных матчей')
 
 
-
-
-
 def football_live():
     URL = "https://odds.ru/football/"
     request = requests.get(URL)
@@ -63,7 +60,10 @@ def football_live():
                     schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(
                         j.findAll(class_='table-tournaments__score color-green-primary')[0]))[
                         -3] + '\n' + 'В данный момент в игре перерыв']))
-                teams.append(' '.join([re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[-3] + '  :  ' + re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[1]))[-3]]))
+                teams.append(' '.join([re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[
+                                           -3] + '  :  ' +
+                                       re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[1]))[
+                                           -3]]))
                 flag += 1
         for m, j in enumerate(liga):
             ligaviy_dicktator[str(films).find(j)] = j
@@ -127,9 +127,13 @@ def hockey_live():
             if j.findAll(class_='table-tournaments__score color-green-primary'):
                 team_one.append(re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[-3])
                 if not times[flag] == 'Перерыв':
-                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(j.findAll(class_='table-tournaments__score color-green-primary')[0]))[-3] + '\n' + 'Время с начала матча:', times[flag], 'минут']))
+                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(
+                        j.findAll(class_='table-tournaments__score color-green-primary')[0]))[
+                        -3] + '\n' + 'Время с начала матча:', times[flag], 'минут']))
                 else:
-                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(j.findAll(class_='table-tournaments__score color-green-primary')[0]))[-3] + '\n' + 'В данный момент в игре перерыв']))
+                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(
+                        j.findAll(class_='table-tournaments__score color-green-primary')[0]))[
+                        -3] + '\n' + 'В данный момент в игре перерыв']))
                 teams.append(' '.join([re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[
                                            -3] + '  :  ' +
                                        re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[1]))[
@@ -197,11 +201,18 @@ def basketball_live():
             if j.findAll(class_='table-tournaments__score color-green-primary'):
                 team_one.append(re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[-3])
                 if not times[flag] == 'Перерыв':
-                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(j.findAll(class_='table-tournaments__score color-green-primary')[0]))[-3] + '\n' + 'Время с начала матча:', times[flag], 'минут']))
+                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(
+                        j.findAll(class_='table-tournaments__score color-green-primary')[0]))[
+                        -3] + '\n' + 'Время с начала матча:', times[flag], 'минут']))
                 else:
-                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(j.findAll(class_='table-tournaments__score color-green-primary')[0]))[-3] + '\n' + 'В данный момент в игре перерыв']))
+                    schet_i_time.append(' '.join(['счёт:', re.split('"|<|>', str(
+                        j.findAll(class_='table-tournaments__score color-green-primary')[0]))[
+                        -3] + '\n' + 'В данный момент в игре перерыв']))
 
-                teams.append(' '.join([re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[-3] + '  :  ' + re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[1]))[-3]]))
+                teams.append(' '.join([re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[0]))[
+                                           -3] + '  :  ' +
+                                       re.split('"|<|>', str(j.findAll(class_='table-tournaments__team-name')[1]))[
+                                           -3]]))
                 flag += 1
         for m, j in enumerate(liga):
             ligaviy_dicktator[str(films).find(j)] = j
@@ -240,5 +251,5 @@ def basketball_live():
 
 
 # football_live()
-hockey_live()
+# hockey_live()
 # basketball_live()
