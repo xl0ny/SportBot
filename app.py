@@ -516,7 +516,6 @@ def basketball():
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
 
 
-# for i in football():
-#     print(i)
+# print(football())
 # hockey()
 # basketball()

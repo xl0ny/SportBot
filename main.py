@@ -9,6 +9,7 @@ import json
 import slezhka
 import app
 import ast
+from math import ceil, floor
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -37,7 +38,7 @@ def start(message: telebot.types.Message):
         json.dump(users, file, ensure_ascii=False)
 
     um = telebot.types.ReplyKeyboardMarkup(True, True)
-    um.row("Коэфиценты сегодня", "Новости", "Подписки")
+    um.row("Коэффиценты сегодня", "Новости", "Подписки")
 
     bot.send_message(message.chat.id, "Привет, это спорт бот !", reply_markup=um)
 
@@ -71,16 +72,14 @@ def set_team(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    print(message)
+    # print(message)
     if str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
         with open('data/users.json') as f:
             users = json.load(f)
         users[str(message.chat.id)]["schetchik_novostey"] += 1
         with open('data/users.json', 'w') as file:
-            json.dump(json.loads(str(users).replace("'", '"')), file, skipkeys=False, ensure_ascii=True,
-                      check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
-                      sort_keys=False)
+            json.dump(json.loads(str(users).replace("'", '"')), file)
     else:
         with open('data/users.json') as f:
             users = json.load(f)
@@ -89,9 +88,9 @@ def handle_text(message):
             json.dump(json.loads(str(users).replace("'", '"')), file, skipkeys=False, ensure_ascii=True,
                       check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
                       sort_keys=False)
-    if message.text == "Коэфиценты сегодня":
+    if message.text == "Коэффиценты сегодня":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Футбол ⚽", "Баскетбол 🏀", "Хоккей 🏒")
+        um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
         bot.send_message(message.chat.id, "Выберите вид спорта 🏀⚽️🤾‍️⛹️‍️", reply_markup=um)
     elif message.text == "Новости":
@@ -117,7 +116,7 @@ def handle_text(message):
                 bot.send_message(message.chat.id, f"Ваши подписки: {', '.join(users[str(message.chat.id)]['team'])}",
                                  reply_markup=um)
             else:
-                print(1)
+                # print(1)
                 bot.send_message(message.chat.id, f"У вас пока нет подписок",
                                  reply_markup=um)
     elif message.text == "Хочу подписаться":
@@ -128,11 +127,13 @@ def handle_text(message):
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери страну", reply_markup=um)
     elif message.text.replace('⠀', '') in cntrs and not message.text in cntrs:
-        print('asd')
-        print(list(slezhka.all_teams.keys()))
+        # print('asd')
+        # print(list(slezhka.all_teams.keys()))
         cntr_mas = list(cntrs[message.text.replace('⠀', '')])
+        print(cntr_mas)
         # print(list(cntrs.items()))
-        try:
+        sup = []
+        if len(cntr_mas) == 16:
             flag = 0
             um = telebot.types.ReplyKeyboardMarkup(True, True)
             timusi = [cntr_mas[0], cntr_mas[1], cntr_mas[2], cntr_mas[3],
@@ -142,75 +143,76 @@ def handle_text(message):
             for i in users[''.join(str(message.chat.id))]['team']:
                 if i in timusi:
                     timusi.remove(i)
-            for i in range(len(timusi)):
-                if len(timusi) - i > 3:
-                    um.row('⠀' + timusi[i + flag], '⠀' + timusi[flag + 1])
-                    print('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
-                    flag += 2
-                if len(timusi) - i == 2:
-                    um.row('⠀' + timusi[i])
-                else:
-                    pass
-        except Exception:
-            try:
-                flag = 0
-                um = telebot.types.ReplyKeyboardMarkup(True, True)
-                timusi = [cntr_mas[0], cntr_mas[1], cntr_mas[2], cntr_mas[3],
-                          cntr_mas[4], cntr_mas[5], cntr_mas[6], cntr_mas[7],
-                          cntr_mas[8], cntr_mas[9]]
-                for i in users[''.join(str(message.chat.id))]['team']:
-                    if i in timusi:
-                        timusi.remove(i)
-                for i in range(len(timusi)):
-                    if len(timusi) - i > 2:
-                        um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
+            # print(timusi)
+            for i in range(ceil(len(timusi) / 2)):
+                if len(timusi) - i > ceil(len(timusi) / 2):
+                    print('asd')
+                    um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
+                    if not len(timusi) - flag < 2:
                         flag += 2
-                    if len(timusi) - i == 2:
-                        um.row('⠀' + timusi[i])
-                    else:
-                        pass
-            except Exception:
-                flag = 0
-                um = telebot.types.ReplyKeyboardMarkup(True, True)
-                timusi = [cntr_mas[0], cntr_mas[1], cntr_mas[2]]
-                for i in users[''.join(str(message.chat.id))]['team']:
-                    if i in timusi:
-                        timusi.remove(i)
-                for i in range(len(timusi)):
-                    if len(timusi) - i > 2:
-                        um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
+                if len(timusi) - i == ceil(len(timusi) / 2):
+                    um.row('⠀' + timusi[-1])
+            print(timusi)
+            print(sup)
+        elif len(cntr_mas) == 10:
+            flag = 0
+            um = telebot.types.ReplyKeyboardMarkup(True, True)
+            timusi = [cntr_mas[0], cntr_mas[1], cntr_mas[2], cntr_mas[3],
+                      cntr_mas[4], cntr_mas[5], cntr_mas[6], cntr_mas[7],
+                      cntr_mas[8], cntr_mas[9]]
+            for i in users[''.join(str(message.chat.id))]['team']:
+                if i in timusi:
+                    timusi.remove(i)
+            for i in range(ceil(len(timusi) / 2)):
+                if len(timusi) - i > ceil(len(timusi) / 2):
+                    print('asd')
+                    um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
+                    if not len(timusi) - flag < 2:
                         flag += 2
-                    if len(timusi) - i == 2:
-                        um.row('⠀' + timusi[i])
-                    else:
-                        pass
+                if len(timusi) - i == ceil(len(timusi) / 2):
+                    um.row('⠀' + timusi[-1])
+            print(timusi)
+
+        else:
+            flag = 0
+            um = telebot.types.ReplyKeyboardMarkup(True, True)
+            timusi = [cntr_mas[0], cntr_mas[1], cntr_mas[2]]
+            for i in users[''.join(str(message.chat.id))]['team']:
+                if i in timusi:
+                    timusi.remove(i)
+            for i in range(ceil(len(timusi) / 2)):
+                if len(timusi) - i > ceil(len(timusi) / 2):
+                    print('asd')
+                    um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
+                    if not len(timusi) - flag < 2:
+                        flag += 2
+                if len(timusi) - i == ceil(len(timusi) / 2):
+                    um.row('⠀' + timusi[-1])
+            print(timusi, 'kebab')
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif message.text.replace('⠀', '') in list(slezhka.all_teams.keys()) and not message.text in list(
             slezhka.all_teams.keys()):
-        print('dsa')
+        # print('dsa')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         if not message.text.replace('⠀', '') in users[''.join(str(message.chat.id))]['team']:
             with open('data/users.json') as f:
                 users = json.load(f)
-            print(str(message.chat.id))
-            print(users)
+            # print(str(message.chat.id))
+            # print(users)
             users[''.join(str(message.chat.id))]['team'].append(''.join(str(message.text)).replace('⠀', ''))
-
-        print(users)
+        # print(users)
         with open('data/users.json', 'w') as file:
-            json.dump(json.loads(str(users).replace("'", '"')), file, skipkeys=False, ensure_ascii=True,
-                      check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
-                      sort_keys=False)
-        um.row("Коэфиценты сегодня", "Новости", "Подписки")
+            json.dump(json.loads(str(users).replace("'", '"')), file, ensure_ascii=False)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
         bot.send_message(message.chat.id, 'Подписка оформлена', reply_markup=um)
 
     elif message.text in cntrs:
         country = message.text
         cntr_mas = list(cntrs[message.text])
-        print(cntr_mas)
+        # print(cntr_mas)
         # print(list(cntrs.items()))
         try:
-            um = telebot.types.ReplyKeyboardMarkup(True, True)
+            um = telebot.types.ReplyKeyboardMarkup(True, False)
             um.row(cntr_mas[0], cntr_mas[1])
             um.row(cntr_mas[2], cntr_mas[3])
             um.row(cntr_mas[4], cntr_mas[5])
@@ -222,38 +224,38 @@ def handle_text(message):
             um.row("Новости")
         except Exception:
             try:
-                um = telebot.types.ReplyKeyboardMarkup(True, True)
+                um = telebot.types.ReplyKeyboardMarkup(True, False)
                 um.row(cntr_mas[0], cntr_mas[1])
                 um.row(cntr_mas[2], cntr_mas[3])
                 um.row(cntr_mas[4], cntr_mas[5])
                 um.row(cntr_mas[6], cntr_mas[7])
                 um.row(cntr_mas[8], cntr_mas[9])
             except Exception:
-                um = telebot.types.ReplyKeyboardMarkup(True, True)
+                um = telebot.types.ReplyKeyboardMarkup(True, False)
                 um.row(cntr_mas[0], cntr_mas[1], cntr_mas[2])
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
-        print('Абдулахмед')
+        # print('Абдулахмед')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Коэфиценты сегодня", "Новости", "Подписки")
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
         x = int(users[str(message.chat.id)]["schetchik_novostey"])
         for i in slezhka.get_news(slezhka.all_teams[message.text])[x + 2:x + 3]:
-            bot.send_message(message.chat.id, i, reply_markup=um)
+            bot.send_message(message.chat.id, i)
     elif message.text in slezhka.all_teams:
         # print(1)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Коэфиценты сегодня", "Новости", "Подписки")
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
         for i in slezhka.get_news(slezhka.all_teams[message.text])[
                  :int(users[str(message.chat.id)]["schetchik_novostey"]) + 3]:
-            bot.send_message(message.chat.id, i, reply_markup=um)
-    elif message.text == "Футбол ⚽":
+            bot.send_message(message.chat.id, i)
+    elif message.text == "Футбол":
         bot.send_message(message.from_user.id, "Загрузка...")
         for i in app.football():
             print(i)
             bot.send_message(message.from_user.id, i)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Футбол ⚽", "Баскетбол 🏀", "Хоккей 🏒")
+        um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
         bot.send_message(message.chat.id, "Все матчи на сегодня выведены !", reply_markup=um)
     else:
@@ -261,9 +263,7 @@ def handle_text(message):
 
     users[str(message.chat.id)]["last_message"] = str(message.text)
     with open('data/users.json', 'w') as file:
-        json.dump(json.loads(str(users).replace("'", '"')), file, skipkeys=False, ensure_ascii=True,
-                  check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
-                  sort_keys=False)
+        json.dump(json.loads(str(users).replace("'", '"').replace('⠀', '')), file, ensure_ascii=False)
 
 
 def start_process():  # Запуск Process
