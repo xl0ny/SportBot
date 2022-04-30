@@ -215,7 +215,7 @@ def get_news(team):
             data_vihoda = str(re.split('data-news-dtime="|" data-news-id|:', str(j))[1]).replace('"', '').replace('<', '').replace('>',
                                                                                                               '').replace(
                 'strong', '').replace('/', '')[:10]
-            print(data_vihoda)
+            # print(data_vihoda)
             # print(re.split('>|<', str(j.findAll('span')))[2])
             u = str(re.split('</a>|=', str(j.findAll('a')[0]))[-2]).replace('"', '').replace('<', '').replace('>',
                                                                                                               '').replace(
