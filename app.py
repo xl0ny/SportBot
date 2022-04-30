@@ -225,6 +225,7 @@ def football():
                     break
     # print('Европа. Лига чемпионов УЕФА' in ligaviy_dicktator_ligi, ligaviy_dicktator_ligi)
     said = []
+    ans = []
     for i in range(len(team_one)):
         # print(team_one[i])
         pobeda = str(sami_kontori_pri_pobede[i]).replace('"', '').replace("'", "")
@@ -237,11 +238,13 @@ def football():
                     said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
-        print(team_one[i] + " : " + team_two[i], main_coefficent[i])
-
-        print(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} ')
-        print(f'Лучшая контора для ставки на ничью: {dicktator[nichya]}')
-        print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
+        mmas = []
+        mmas.append(team_one[i] + " : " + team_two[i])
+        mmas.append(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} - {main_coefficent[i][0]}')
+        mmas.append(f'Лучшая контора для ставки на ничью: {dicktator[nichya]} - {main_coefficent[i][1]}')
+        mmas.append(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]} - {main_coefficent[i][2]}\n\n\n\n')
+        ans.append("\n\n".join(mmas))
+    return ans
 
 
 def hockey():
@@ -512,6 +515,6 @@ def basketball():
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
 
 
-# football()
+# print(football())
 # hockey()
 # basketball()
