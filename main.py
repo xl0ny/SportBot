@@ -90,7 +90,10 @@ def handle_text(message):
                       check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
                       sort_keys=False)
     if message.text == "Коэфиценты сегодня":
-        bot.send_message(message.from_user.id, app.football())
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Футбол ⚽", "Баскетбол 🏀", "Хоккей 🏒")
+        um.row("/start")
+        bot.send_message(message.chat.id, "Выберите вид спорта 🏀⚽️🤾‍️⛹️‍️", reply_markup=um)
     elif message.text == "Новости":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Испания", "Англия", "Бразилия")
@@ -244,6 +247,14 @@ def handle_text(message):
         for i in slezhka.get_news(slezhka.all_teams[message.text])[
                  :int(users[str(message.chat.id)]["schetchik_novostey"]) + 3]:
             bot.send_message(message.chat.id, i, reply_markup=um)
+    elif message.text == "Футбол ⚽":
+        bot.send_message(message.from_user.id, "Загрузка...")
+        for i in app.football():
+            bot.send_message(message.from_user.id, i)
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Футбол ⚽", "Баскетбол 🏀", "Хоккей 🏒")
+        um.row("/start")
+        bot.send_message(message.chat.id, "Все матчи на сегодня выведены !", reply_markup=um)
     else:
         pass
 
