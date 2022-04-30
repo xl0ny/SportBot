@@ -231,14 +231,15 @@ def football():
         pobeda = str(sami_kontori_pri_pobede[i]).replace('"', '').replace("'", "")
         nichya = sami_kontori_pri_nichye[i].replace('"', '').replace("'", "")
         proigrish = sami_kontori_pri_proigrishe[i].replace('"', '').replace("'", "")
+        mmas = []
+
         for j in ligaviy_dicktator_ligi:
             if team_one[i] in ligaviy_dicktator_ligi[j]:
                 if not j in said:
-                    # print(j)
+                    mmas.append(j)
                     said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
-        mmas = []
         mmas.append(team_one[i] + " : " + team_two[i])
         mmas.append(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} - {main_coefficent[i][0]}')
         mmas.append(f'Лучшая контора для ставки на ничью: {dicktator[nichya]} - {main_coefficent[i][1]}')
@@ -515,6 +516,7 @@ def basketball():
         print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
 
 
-# print(football())
+# for i in football():
+#     print(i)
 # hockey()
 # basketball()

@@ -250,6 +250,7 @@ def handle_text(message):
     elif message.text == "Футбол ⚽":
         bot.send_message(message.from_user.id, "Загрузка...")
         for i in app.football():
+            print(i)
             bot.send_message(message.from_user.id, i)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Футбол ⚽", "Баскетбол 🏀", "Хоккей 🏒")
