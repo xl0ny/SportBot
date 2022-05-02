@@ -45,29 +45,22 @@ def start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['help'])
 def help(message: telebot.types.Message):
-    bot.send_message(message.chat.id, "Напишите /matches, чтобы вывести список сегодняшних матчей\n" +
-                     "Напишите /timer {период в часах}, чтобы установить таймер присылания "
-                     "информации\n" +
-                     "Напишите /set_team {команда}, чтобы получать уведомления о любомой команде")
+    bot.send_message(message.chat.id,
+                     "Напишите /timer {период в часах}, чтобы установить таймер отправки ", "информации\n")
 
 
 @bot.message_handler(commands=['timer'])
 def set_timer(message: telebot.types.Message):
-    pass
-
-
-@bot.message_handler(commands=['set_team'])
-def set_team(message: telebot.types.Message):
-    team = str(message.text)[9:]
-    print(team)
+    period = str(message.text)[6:]
+    print(period)
     with open('data/users.json') as f:
         users = json.load(f)
     # print(users)
-    users[str(message.chat.id)] = {"team": team,
-                                   "period": ""}
+    users[str(message.chat.id)]["period"] = period
     # print(users)
     with open('data/users.json', 'w') as file:
         json.dump(users, file)
+
 
 
 @bot.message_handler(content_types=['text'])
@@ -267,25 +260,27 @@ def handle_text(message):
 
 
 def start_process():  # Запуск Process
-    p1 = Process(target=Evr.start_schedule, args=()).start()
+    mas_podpisok = []
+    with open('data/users.json') as f:
+        users = json.load(f)
+        print(users)
+    for user_id in users:
+        Process(target=Evr.start_schedule, args=(int(users[user_id]['period']), user_id)).start()
 
 
 class Evr:
 
     @staticmethod
-    def start_schedule():
-        schedule.every(1).hour.do(Evr.send_to_all)
+    def start_schedule(timeee, user_id):
+        schedule.every(timeee).seconds.do(Evr.send_to, user=user_id)
 
         while True:
             schedule.run_pending()
             time.sleep(1)
 
     @staticmethod
-    def send_to_all():
-        with open('data/users.json') as f:
-            users = json.load(f)
-        for i in users:
-            bot.send_message(int(i), "smth")
+    def send_to(user):
+        bot.send_message(int(user), "smth")
 
 
 if __name__ == '__main__':
