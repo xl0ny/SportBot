@@ -23,6 +23,35 @@ cntrs = {"Испания": slezhka.spain,
          "Португалия": slezhka.portugalia,
          "Швейцария": slezhka.switzerland,
          "Россия": slezhka.russia}
+photos = {'https://sportotvet.ru/wp-content/uploads/2018/12/winline-1.png': 'Winline',
+             'https://static.legalcdn.org/35/30/60866f3b22a37_1619423035-392x392.png': 'Olimpbet',
+             'https://ratingbet.com/upload/bookmaker/image_64.jpg': '1XСТАВКА',
+             'https://s5o.ru/storage/dumpster/8/0b/17cd842b9c7cf0b57dc0058b667fe.png': 'МЕЛБЕТ',
+             'https://s5o.ru/storage/dumpster/c/03/b24638d8c4acd2fa7fdeb100719ad.png': 'PINNACLE',
+             'https://s5o.ru/storage/dumpster/4/c3/cfa1c3c8e37f1d29e966a3e2ccf76.png': 'FONBET',
+             'https://tennis-gambling.com/wp-content/uploads/2020/05/p1.jpg': 'LEON',
+             'https://milanac.ru/wp-content/uploads/2022/01/becity.png': 'БЕТСИТИ',
+             'http://tennisi.bet/Images/top/top_tennisi_tbet3.png': 'TENNISI bet',
+             'https://arbers.ru/wp-content/uploads/2017/04/marathonbet.png': 'МАРАФОН bet',
+             'https://s5o.ru/storage/dumpster/c/c2/78ac4bd08ba8322a2b5fd13d1602f.png': 'Лига ставок'
+             }
+
+links = {'https://winline.ru': 'Winline',
+             'https://www.olimp.bet': 'Olimpbet',
+             'https://1xstavka.ru': '1XСТАВКА',
+             'https://melbet.ru': 'МЕЛБЕТ',
+             'https://www.pinnacle.com': 'PINNACLE',
+             'https://www.fon.bet': 'FONBET',
+             'https://leon.ru': 'LEON',
+             'https://betcity.ru': 'БЕТСИТИ',
+             'https://tennisi.bet': 'TENNISI bet',
+             'https://www.marathonbet.ru/su/betting/Football+-+11': 'МАРАФОН bet',
+             'https://www.ligastavok.ru/?utm_referrer=https%3A%2F%2Fwww.google.com%2F': 'Лига ставок'
+             }
+
+mas_kontor = photos
+mas_kontor = {mas_kontor[i]: i for i in mas_kontor}
+links = {links[i]: i for i in links}
 
 
 @bot.message_handler(commands=['start'])
@@ -39,6 +68,7 @@ def start(message: telebot.types.Message):
 
     um = telebot.types.ReplyKeyboardMarkup(True, True)
     um.row("Коэффиценты сегодня", "Новости", "Подписки")
+    um.row("Обcуждение матча", "Наши букмекеры")
 
     bot.send_message(message.chat.id, "Привет, это спорт бот !", reply_markup=um)
 
@@ -62,7 +92,6 @@ def set_timer(message: telebot.types.Message):
         json.dump(users, file)
 
 
-
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
     # print(message)
@@ -82,10 +111,11 @@ def handle_text(message):
                       check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
                       sort_keys=False)
     if message.text == "Коэффиценты сегодня":
+        print("frfrefnerf")
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
-        bot.send_message(message.chat.id, "Выберите вид спорта 🏀⚽️🤾‍️⛹️‍️", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите вид спорта", reply_markup=um)
     elif message.text == "Новости":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Испания", "Англия", "Бразилия")
@@ -197,6 +227,7 @@ def handle_text(message):
         with open('data/users.json', 'w') as file:
             json.dump(json.loads(str(users).replace("'", '"')), file, ensure_ascii=False)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
         bot.send_message(message.chat.id, 'Подписка оформлена', reply_markup=um)
 
     elif message.text in cntrs:
@@ -232,6 +263,7 @@ def handle_text(message):
         # print('Абдулахмед')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
         x = int(users[str(message.chat.id)]["schetchik_novostey"])
         for i in slezhka.get_news(slezhka.all_teams[message.text])[x + 2:x + 3]:
             bot.send_message(message.chat.id, i)
@@ -239,6 +271,7 @@ def handle_text(message):
         # print(1)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
         for i in slezhka.get_news(slezhka.all_teams[message.text])[
                  :int(users[str(message.chat.id)]["schetchik_novostey"]) + 3]:
             bot.send_message(message.chat.id, i)
@@ -251,6 +284,27 @@ def handle_text(message):
         um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
         bot.send_message(message.chat.id, "Все матчи на сегодня выведены !", reply_markup=um)
+    elif message.text == "Обcуждение матча":
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
+        bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
+    elif message.text == "Наши букмекеры":
+        komand_kontor = list(mas_kontor.keys())
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
+        um.row(komand_kontor[3], komand_kontor[4], komand_kontor[5])
+        um.row(komand_kontor[6], komand_kontor[7], komand_kontor[8])
+        um.row(komand_kontor[9], komand_kontor[10])
+        um.row("/start")
+        bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
+    elif message.text in mas_kontor:
+        print(mas_kontor[message.text])
+        bot.send_photo(
+            message.chat.id,
+            mas_kontor[message.text],
+            caption=links[message.text]
+        )
     else:
         pass
 
@@ -272,7 +326,7 @@ class Evr:
 
     @staticmethod
     def start_schedule(timeee, user_id):
-        schedule.every(timeee).seconds.do(Evr.send_to, user=user_id)
+        schedule.every(timeee).hours.do(Evr.send_to, user=user_id)
 
         while True:
             schedule.run_pending()
@@ -284,7 +338,7 @@ class Evr:
 
 
 if __name__ == '__main__':
-    start_process()
+    # start_process()
     try:
         bot.polling(none_stop=True)
     except:
