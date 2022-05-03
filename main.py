@@ -317,7 +317,7 @@ def handle_text(message):
         )
     else:
         pass
-    if all(i in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 ' for i in message.text):
+    if all(i in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 ' for i in str(message.text).lower()):
         users[str(message.chat.id)]["last_message"] = str(message.text)
         with open('data/users.json', 'w') as file:
             json.dump(json.loads(str(users).replace("'", '"').replace('⠀', '')), file, ensure_ascii=False)
