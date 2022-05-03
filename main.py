@@ -95,6 +95,7 @@ def set_timer(message: telebot.types.Message):
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
     # print(message)
+
     if str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
         with open('data/users.json') as f:
@@ -110,6 +111,15 @@ def handle_text(message):
             json.dump(json.loads(str(users).replace("'", '"')), file, skipkeys=False, ensure_ascii=True,
                       check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None,
                       sort_keys=False)
+    # if str(message.chat.id) not in json.load(open('data/users.json')):
+    #     with open('data/users.json') as f:
+    #         users = json.load(f)
+    #     users[str(message.chat.id)] = {"team": [],
+    #                                    "period": "",
+    #                                    "schetchik_novostey": 1,
+    #                                    "last_message": ""}
+    #     with open('data/users.json', 'w') as file:
+    #         json.dump(users, file, ensure_ascii=False)
     if message.text == "Коэффиценты сегодня":
         print("frfrefnerf")
         um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -245,7 +255,6 @@ def handle_text(message):
             um.row(cntr_mas[10], cntr_mas[11])
             um.row(cntr_mas[12], cntr_mas[13])
             um.row(cntr_mas[14], cntr_mas[15])
-            um.row("Новости")
         except Exception:
             try:
                 um = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -257,6 +266,7 @@ def handle_text(message):
             except Exception:
                 um = telebot.types.ReplyKeyboardMarkup(True, False)
                 um.row(cntr_mas[0], cntr_mas[1], cntr_mas[2])
+        um.row("Новости")
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
@@ -307,10 +317,10 @@ def handle_text(message):
         )
     else:
         pass
-
-    users[str(message.chat.id)]["last_message"] = str(message.text)
-    with open('data/users.json', 'w') as file:
-        json.dump(json.loads(str(users).replace("'", '"').replace('⠀', '')), file, ensure_ascii=False)
+    if all(i in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 ' for i in message.text):
+        users[str(message.chat.id)]["last_message"] = str(message.text)
+        with open('data/users.json', 'w') as file:
+            json.dump(json.loads(str(users).replace("'", '"').replace('⠀', '')), file, ensure_ascii=False)
 
 
 def start_process():  # Запуск Process
