@@ -244,7 +244,6 @@ def get_news_since_to(team='psg', since='55 12 2 5 2023'):
     # print(now)
     team_times_news = {}
     since = time.strptime(since, "%M %H %d %m %Y")
-    print(now < since, sep='\n')
     for i in get_news(team):
         for j in i.split('\n'):
             # print(team_news)

@@ -10,6 +10,7 @@ import slezhka
 import app
 import ast
 from math import ceil, floor
+import pymorphy2
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -24,30 +25,30 @@ cntrs = {"Испания": slezhka.spain,
          "Швейцария": slezhka.switzerland,
          "Россия": slezhka.russia}
 photos = {'https://sportotvet.ru/wp-content/uploads/2018/12/winline-1.png': 'Winline',
-             'https://static.legalcdn.org/35/30/60866f3b22a37_1619423035-392x392.png': 'Olimpbet',
-             'https://ratingbet.com/upload/bookmaker/image_64.jpg': '1XСТАВКА',
-             'https://s5o.ru/storage/dumpster/8/0b/17cd842b9c7cf0b57dc0058b667fe.png': 'МЕЛБЕТ',
-             'https://s5o.ru/storage/dumpster/c/03/b24638d8c4acd2fa7fdeb100719ad.png': 'PINNACLE',
-             'https://s5o.ru/storage/dumpster/4/c3/cfa1c3c8e37f1d29e966a3e2ccf76.png': 'FONBET',
-             'https://tennis-gambling.com/wp-content/uploads/2020/05/p1.jpg': 'LEON',
-             'https://milanac.ru/wp-content/uploads/2022/01/becity.png': 'БЕТСИТИ',
-             'http://tennisi.bet/Images/top/top_tennisi_tbet3.png': 'TENNISI bet',
-             'https://arbers.ru/wp-content/uploads/2017/04/marathonbet.png': 'МАРАФОН bet',
-             'https://s5o.ru/storage/dumpster/c/c2/78ac4bd08ba8322a2b5fd13d1602f.png': 'Лига ставок'
-             }
+          'https://static.legalcdn.org/35/30/60866f3b22a37_1619423035-392x392.png': 'Olimpbet',
+          'https://ratingbet.com/upload/bookmaker/image_64.jpg': '1XСТАВКА',
+          'https://s5o.ru/storage/dumpster/8/0b/17cd842b9c7cf0b57dc0058b667fe.png': 'МЕЛБЕТ',
+          'https://s5o.ru/storage/dumpster/c/03/b24638d8c4acd2fa7fdeb100719ad.png': 'PINNACLE',
+          'https://s5o.ru/storage/dumpster/4/c3/cfa1c3c8e37f1d29e966a3e2ccf76.png': 'FONBET',
+          'https://tennis-gambling.com/wp-content/uploads/2020/05/p1.jpg': 'LEON',
+          'https://milanac.ru/wp-content/uploads/2022/01/becity.png': 'БЕТСИТИ',
+          'http://tennisi.bet/Images/top/top_tennisi_tbet3.png': 'TENNISI bet',
+          'https://arbers.ru/wp-content/uploads/2017/04/marathonbet.png': 'МАРАФОН bet',
+          'https://s5o.ru/storage/dumpster/c/c2/78ac4bd08ba8322a2b5fd13d1602f.png': 'Лига ставок'
+          }
 
 links = {'https://winline.ru': 'Winline',
-             'https://www.olimp.bet': 'Olimpbet',
-             'https://1xstavka.ru': '1XСТАВКА',
-             'https://melbet.ru': 'МЕЛБЕТ',
-             'https://www.pinnacle.com': 'PINNACLE',
-             'https://www.fon.bet': 'FONBET',
-             'https://leon.ru': 'LEON',
-             'https://betcity.ru': 'БЕТСИТИ',
-             'https://tennisi.bet': 'TENNISI bet',
-             'https://www.marathonbet.ru/su/betting/Football+-+11': 'МАРАФОН bet',
-             'https://www.ligastavok.ru/?utm_referrer=https%3A%2F%2Fwww.google.com%2F': 'Лига ставок'
-             }
+         'https://www.olimp.bet': 'Olimpbet',
+         'https://1xstavka.ru': '1XСТАВКА',
+         'https://melbet.ru': 'МЕЛБЕТ',
+         'https://www.pinnacle.com': 'PINNACLE',
+         'https://www.fon.bet': 'FONBET',
+         'https://leon.ru': 'LEON',
+         'https://betcity.ru': 'БЕТСИТИ',
+         'https://tennisi.bet': 'TENNISI bet',
+         'https://www.marathonbet.ru/su/betting/Football+-+11': 'МАРАФОН bet',
+         'https://www.ligastavok.ru/?utm_referrer=https%3A%2F%2Fwww.google.com%2F': 'Лига ставок'
+         }
 
 mas_kontor = photos
 mas_kontor = {mas_kontor[i]: i for i in mas_kontor}
@@ -60,9 +61,10 @@ def start(message: telebot.types.Message):
         users = json.load(f)
     if str(message.chat.id) not in users:
         users[str(message.chat.id)] = {"team": [],
-                                       "period": "",
+                                       "period": "1",
                                        "schetchik_novostey": 1,
-                                       "last_message": ""}
+                                       "last_message": "",
+                                       "last_sent_time": ""}
     with open('data/users.json', 'w') as file:
         json.dump(users, file, ensure_ascii=False)
 
@@ -136,6 +138,7 @@ def handle_text(message):
     elif message.text == "Подписки":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Мои подписки", "Хочу подписаться")
+        um.row("Периодичность")
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери действие", reply_markup=um)
     elif message.text == "Мои подписки":
@@ -152,6 +155,43 @@ def handle_text(message):
                 # print(1)
                 bot.send_message(message.chat.id, f"У вас пока нет подписок",
                                  reply_markup=um)
+    elif message.text == "Периодичность" and json.load(open('data/users.json'))[str(message.chat.id)]["last_sent_time"]:
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        x = ['1', '3', '7']
+        x.remove(str(json.load(open('data/users.json'))[str(message.chat.id)]["period"]))
+        print(x)
+        for i in x:
+            um.row(
+                f"Раз в {i.replace('1', '')} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(i)).word)}")
+        um.row(
+            f"Оставить текущее (Раз в {str(json.load(open('data/users.json'))[str(message.chat.id)]['period']).replace('1', '')} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(str(json.load(open('data/users.json'))[str(message.chat.id)]['period']))).word)})")
+        um.row("/start")
+        bot.send_message(message.chat.id, "Выбери периодичность прихода новостей", reply_markup=um)
+    elif message.text in ['Раз в 3 дня', 'Раз в 7 дней', 'Раз в  день'] and json.load(open('data/users.json'))[str(message.chat.id)]["last_message"] == 'Периодичность':
+        # print('барабан')
+        noww = time.strftime("%M %H %d %m %Y", time.localtime())
+        nowww = []
+        now = ' '
+        for i in noww.split():
+            if not i[0] == '0':
+                nowww.append(i)
+            else:
+                nowww.append(i[1:])
+        now = now.join([i for i in nowww])
+        with open('data/users.json') as f:
+            users = json.load(f)
+        users[''.join(str(message.chat.id))]["last_sent_time"] = now
+        # print(type(message.text.split()[-2]))
+        if not str(message.text.split()[-2]).isdigit():
+            users[''.join(str(message.chat.id))]["period"] = "1"
+        else:
+            users[''.join(str(message.chat.id))]["period"] = str(message.text.split()[-2])
+        # print(users)
+        with open('data/users.json', 'w') as file:
+            json.dump(json.loads(str(users).replace("'", '"')), file)
+        print('барабашка')
+        # start_process()
+
     elif message.text == "Хочу подписаться":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("⠀Испания", "⠀Англия", "⠀Бразилия")
@@ -225,7 +265,21 @@ def handle_text(message):
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif message.text.replace('⠀', '') in list(slezhka.all_teams.keys()) and not message.text in list(
             slezhka.all_teams.keys()):
-        # print('dsa')
+        if not json.load(open('data/users.json'))[str(message.chat.id)]["last_sent_time"]:
+            noww = time.strftime("%M %H %d %m %Y", time.localtime())
+            nowww = []
+            now = ' '
+            for i in noww.split():
+                if not i[0] == '0':
+                    nowww.append(i)
+                else:
+                    nowww.append(i[1:])
+            now = now.join([i for i in nowww])
+            with open('data/users.json') as f:
+                users = json.load(f)
+            users[''.join(str(message.chat.id))]["last_sent_time"] = now
+            with open('data/users.json', 'w') as file:
+                json.dump(json.loads(str(users).replace("'", '"')), file)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         if not message.text.replace('⠀', '') in users[''.join(str(message.chat.id))]['team']:
             with open('data/users.json') as f:
@@ -336,7 +390,8 @@ class Evr:
 
     @staticmethod
     def start_schedule(timeee, user_id):
-        schedule.every(timeee).hours.do(Evr.send_to, user=user_id)
+        print(timeee)
+        schedule.every(timeee).seconds.do(Evr.send_to, user=user_id)
 
         while True:
             schedule.run_pending()
@@ -344,11 +399,33 @@ class Evr:
 
     @staticmethod
     def send_to(user):
-        bot.send_message(int(user), "smth")
+        last_sent = json.load(open('data/users.json'))[str(user)]["last_sent_time"]
+        for j in json.load(open('data/users.json'))[str(user)]["team"]:
+            bot.send_message(int(user), j)
+            team = slezhka.all_teams[j]
+            # print(slezhka.get_news_since_to(team, last_sent))
+            for i in slezhka.get_news_since_to(team, last_sent):
+                print(i)
+                bot.send_message(int(user), i)
+        bot.send_message(int(user), 'smth')
+        noww = time.strftime("%M %H %d %m %Y", time.localtime())
+        nowww = []
+        now = ' '
+        for i in noww.split():
+            if not i[0] == '0':
+                nowww.append(i)
+            else:
+                nowww.append(i[1:])
+        now = now.join([i for i in nowww])
+        with open('data/users.json') as f:
+            users = json.load(f)
+        users[''.join(str(user))]["last_sent_time"] = now
+        with open('data/users.json', 'w') as file:
+            json.dump(json.loads(str(users).replace("'", '"')), file)
 
 
 if __name__ == '__main__':
-    # start_process()
+    start_process()
     try:
         bot.polling(none_stop=True)
     except:
