@@ -85,20 +85,27 @@ def football_live():
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]] = []
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]].append(i)
                     break
+    result = {}
     said = []
     for i in range(flag):
         if len(liga) > 1:
             for j in ligaviy_dicktator_ligi:
                 if team_one[i] in ligaviy_dicktator_ligi[j]:
+                    if not j in result.keys():
+                        result[j] = []
+                    if not [schet_i_time[i], teams[i]][::-1] in result[j]:
+                        result[j].append([schet_i_time[i], teams[i]][::-1])
+                    said.append(j)
                     if not j in said:
-                        print(j)
-                        said.append(j)
-        print(schet_i_time[i])
-        print(teams[i])
-        print()
-        print()
-    if flag == 0:
-        print('нет активных матчей')
+                        pass
+                        # print(j)
+
+        # print(schet_i_time[i])
+        # print(teams[i])
+    if not flag == 0:
+        return result
+    else:
+        return 'нет активных матчей'
 
 
 def hockey_live():
@@ -159,20 +166,27 @@ def hockey_live():
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]] = []
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]].append(i)
                     break
+    result = {}
     said = []
     for i in range(flag):
         if len(liga) > 1:
             for j in ligaviy_dicktator_ligi:
                 if team_one[i] in ligaviy_dicktator_ligi[j]:
+                    if not j in result.keys():
+                        result[j] = []
+                    if not [schet_i_time[i], teams[i]][::-1] in result[j]:
+                        result[j].append([schet_i_time[i], teams[i]][::-1])
+                    said.append(j)
                     if not j in said:
-                        print(j)
-                        said.append(j)
-        print(schet_i_time[i])
-        print(teams[i])
-        print()
-        print()
-    if flag == 0:
-        print('нет активных матчей')
+                        pass
+                        # print(j)
+
+        # print(schet_i_time[i])
+        # print(teams[i])
+    if not flag == 0:
+        return result
+    else:
+        return 'нет активных матчей'
 
 
 def basketball_live():
@@ -234,22 +248,31 @@ def basketball_live():
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]] = []
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]].append(i)
                     break
+    result = {}
     said = []
     for i in range(flag):
         if len(liga) > 1:
             for j in ligaviy_dicktator_ligi:
                 if team_one[i] in ligaviy_dicktator_ligi[j]:
+                    if not j in result.keys():
+                        result[j] = []
+                    if not [schet_i_time[i], teams[i]][::-1] in result[j]:
+                        result[j].append([schet_i_time[i], teams[i]][::-1])
+                    said.append(j)
                     if not j in said:
-                        print(j)
-                        said.append(j)
-        print(schet_i_time[i])
-        print(teams[i])
-        print()
-        print()
-    if flag == 0:
-        print('нет активных матчей')
+                        pass
+                        # print(j)
+
+        # print(schet_i_time[i])
+        # print(teams[i])
+    if not flag == 0:
+        return result
+    else:
+        return 'нет активных матчей'
 
 
 # football_live()
 # hockey_live()
-# basketball_live()
+# for i in basketball_live():
+#     if basketball_live()[i][0][0] == 'СТК Чарни Шлупск  :  Шленск':
+#         print(basketball_live()[i][0][0])
