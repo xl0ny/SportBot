@@ -383,16 +383,49 @@ def handle_text(message):
                 koefs[prom] = []
             else:
                 koefs[prom].append("".join(i))
-        um = telebot.types.ReplyKeyboardMarkup(True, True)
-        for i in koefs:
-            um.row(i)
-        bot.send_message(message.chat.id, "Выберите лигу", reply_markup=um)
+        if len(koefs) != 0:
+            um = telebot.types.ReplyKeyboardMarkup(True, True)
+            for i in koefs:
+                um.row(i)
+            bot.send_message(message.chat.id, "Выберите лигу", reply_markup=um)
+        else:
+            um = telebot.types.ReplyKeyboardMarkup(True, True)
+            um.row("Коэффиценты сегодня", "Новости", "Подписки")
+            um.row("Обcуждение матча", "СпортЧат", "Наши букмекеры")
+            bot.send_message(message.chat.id, "Сегодня матчей нет", reply_markup=um)
     elif message.text in koefs:
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Обcуждение матча", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, "".join(koefs[message.text]), reply_markup=um)
         koefs = {}
+    elif message.text == "СпортЧат":
+        print('volga')
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
+        bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
+    elif message.text == "Наши букмекеры":
+        print("frefherbfhebrfhberhfberibfiherbf")
+        komand_kontor = list(mas_kontor.keys())
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
+        um.row(komand_kontor[3], komand_kontor[4], komand_kontor[5])
+        um.row(komand_kontor[6], komand_kontor[7], komand_kontor[8])
+        um.row(komand_kontor[9], komand_kontor[10])
+        um.row("/start")
+        bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
+    elif message.text in mas_kontor:
+        print(mas_kontor[message.text])
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
+        bot.send_photo(
+            message.chat.id,
+            mas_kontor[message.text],
+            caption=links[message.text],
+            reply_markup=um
+        )
     elif message.text == "Хоккей" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
         um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -422,10 +455,14 @@ def handle_text(message):
         bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
     elif message.text in mas_kontor:
         print(mas_kontor[message.text])
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_photo(
             message.chat.id,
             mas_kontor[message.text],
-            caption=links[message.text]
+            caption=links[message.text],
+            reply_markup=um
         )
     elif message.text == "Футбол" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
@@ -480,8 +517,10 @@ def handle_text(message):
             if schet.basketball_live()[i][0][0] == message.text:
                 bot.send_message(message.chat.id, '\n'.join(schet.basketball_live()[i][0]), reply_markup=um)
     else:
-        print('борщ')
-        bot.send_message(message.chat.id, 'К сожалению у меня нет такой команды(')
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
+        bot.send_message(message.chat.id, 'К сожалению у меня нет такой команды(', reply_markup=um)
     if all(i in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 ' for i in str(message.text).lower()):
         users[str(message.chat.id)]["last_message"] = str(message.text)
         with open('data/users.json', 'w') as file:
