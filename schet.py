@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import logging
+import itertools
 
 
 # def football_live():
@@ -270,8 +271,21 @@ def basketball_live():
     else:
         return 'нет активных матчей'
 
-
-# football_live()
+# for i in football_live():
+#     print(football_live()[i][0][0])
+# print(list(football_live().values())[0][0][0])
+# for i in football_live().values():
+#     for j in i:
+#         if 'Реал Кашмир  :  Tiddim Road Athlectic Club' in j:
+#             print('\n'.join(j))
+# print([i for i in range(len(list(football_live().values())))])
+# print('Реал Кашмир  :  Tiddim Road Athlectic Club' in list(itertools.chain.from_iterable(list(itertools.chain.from_iterable([j for j in [i for i in list(football_live().values())]])))))
+# print(any(football_live()[j][0][0] == 'Гимпо Ситизен  :  Гуангжу' for j in [i for i in football_live()]))
+# print([football_live().get(j) for j in [i for i in football_live()]])
+# print([i for i in football_live()])
+# print([z[0] for z in [football_live()[j] for j in [i for i in football_live()]]])
+#print(any(football_live()[j][0][0] == 'Реал Кашмир  :  Tiddim Road Athlectic Club' for j in [i for i in football_live()]))
+# print()
 # hockey_live()
 # for i in basketball_live():
 #     if basketball_live()[i][0][0] == 'СТК Чарни Шлупск  :  Шленск':

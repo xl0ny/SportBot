@@ -200,6 +200,10 @@ russia = {"Зенит": "zenit",
           "Рубин Казань": "rubin",
           "Крылья Советов Самара": "krylia-sovetov"
           }
+broken_needle = ['пари сёна-жермен псж парижа', 'хетафы', 'реал сосьедад', 'палмейрас сан-паулы', 'гремио порта-алегри',
+                 'интернасьонал порта-алегри', 'крузейро бела-оризонти', 'атлетико минейро бела-оризонти', 'ренн',
+                 'фейеноорд роттердов', 'витесс арнема', 'херенвен', 'хераклес алмётшего', 'аталанта', 'кальяри',
+                 'порта', 'жил висенте барселуш', 'морейренса', 'арсенал тула']
 
 
 def get_news(team):
@@ -211,17 +215,20 @@ def get_news(team):
     was = []
     for i in films:
         for j in i.findAll('p'):
-
             # print(str(j).find('data-news-dtime'))
-            data_vihoda = str(re.split('data-news-dtime="|" data-news-id|:', str(j))[1]).replace('"', '').replace('<', '').replace('>',
-                                                                                                              '').replace(
+            data_vihoda = str(re.split('data-news-dtime="|" data-news-id|:', str(j))[1]).replace('"', '').replace('<',
+                                                                                                                  '').replace(
+                '>',
+                '').replace(
                 'strong', '').replace('/', '')[:10]
             # print(data_vihoda)
             # print(re.split('>|<', str(j.findAll('span')))[2])
             u = str(re.split('</a>|=', str(j.findAll('a')[0]))[-2]).replace('"', '').replace('<', '').replace('>',
                                                                                                               '').replace(
                 'strong', '').replace('/', '')
-            masiv.append(u + '\n\n' + 'Дата выхода новости: ' + data_vihoda + '  ' + re.split('>|<', str(j.findAll('span')))[2] + 'МСК')
+            masiv.append(
+                u + '\n\n' + 'Дата выхода новости: ' + data_vihoda + '  ' + re.split('>|<', str(j.findAll('span')))[
+                    2] + 'МСК')
             # print(re.split('>|<', str(j.findAll('span')))[2])
     masiv = masiv
     return masiv
@@ -250,7 +257,8 @@ def get_news_since_to(team='psg', since='55 12 2 5 2023'):
             if j[:11] == 'Дата выхода':
                 pass
                 team_time = []
-                for u in ' '.join([i for i in re.split('-| |:', (j.split()[-2] + " " + j.split()[-1])[:-3])[::-1]]).split():
+                for u in ' '.join(
+                        [i for i in re.split('-| |:', (j.split()[-2] + " " + j.split()[-1])[:-3])[::-1]]).split():
                     if not u[0] == '0':
                         team_time.append(u)
                     else:

@@ -13,6 +13,7 @@ import app
 import ast
 from math import ceil, floor
 import pymorphy2
+import itertools
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -100,6 +101,7 @@ def set_timer(message: telebot.types.Message):
 def handle_text(message):
     # message.text = emoji.demojize(message.text)
     # print(message.text)
+    # print(any(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]] for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))))
     global koefs
     if str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
@@ -126,13 +128,13 @@ def handle_text(message):
     #     with open('data/users.json', 'w') as file:
     #         json.dump(users, file, ensure_ascii=False)
     if message.text != emoji.demojize(message.text):
-        print('em')
+        # print('em')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, "Я пока не умею отвечать на эмоджи)", reply_markup=um)
     elif message.text == "Коэффиценты сегодня":
-        print("frfrefnerf")
+        # print("frfrefnerf")
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
@@ -151,32 +153,45 @@ def handle_text(message):
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери действие", reply_markup=um)
     elif message.text == "Мои подписки":
+        # usas = []
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Подписки")
-        um.row("/start")
+        um.row("Подписки", "/start")
         with open('data/users.json') as f:
             users = json.load(f)
             # print(users[str(message.chat.id)]['team'])
             if users[str(message.chat.id)]['team']:
+                flag = 0
+                for i in range(ceil(len(users[str(message.chat.id)]['team']) / 2)):
+                    if len(users[str(message.chat.id)]['team']) - i > ceil(len(users[str(message.chat.id)]['team']) / 2):
+                        # print('asd')
+                        um.row('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word, 'Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word)
+                        # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word)
+                        # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word)
+                        if not len(users[str(message.chat.id)]['team']) - flag < 2:
+                            flag += 2
+                    if len(users[str(message.chat.id)]['team']) - i == ceil(len(users[str(message.chat.id)]['team']) / 2):
+                        um.row('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect({'gent'}).word)
+                        # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect({'gent'}).word)
                 bot.send_message(message.chat.id, f"Ваши подписки: {', '.join(users[str(message.chat.id)]['team'])}",
                                  reply_markup=um)
+               # print(usas)
             else:
                 # print(1)
                 bot.send_message(message.chat.id, f"У вас пока нет подписок",
                                  reply_markup=um)
     elif message.text == "Периодичность" and json.load(open('data/users.json'))[str(message.chat.id)]["last_sent_time"]:
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        x = ['1', '3', '7']
+        x = ['1', '14', '30']
         x.remove(str(json.load(open('data/users.json'))[str(message.chat.id)]["period"]))
-        print(x)
+        # print(x)
         for i in x:
             um.row(
-                f"Раз в {i.replace('1', '')} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(i)).word)}")
+                f"Раз в {i if not i =='1' else ''} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(i)).word)}")
         um.row(
-            f"Оставить текущее (Раз в {str(json.load(open('data/users.json'))[str(message.chat.id)]['period']).replace('1', '')} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(str(json.load(open('data/users.json'))[str(message.chat.id)]['period']))).word)})")
+            f"Оставить текущее (Раз в {str(json.load(open('data/users.json'))[str(message.chat.id)]['period']) if not str(json.load(open('data/users.json'))[str(message.chat.id)]['period']) == '1' else ''} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(str(json.load(open('data/users.json'))[str(message.chat.id)]['period']))).word)})")
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери периодичность прихода новостей", reply_markup=um)
-    elif message.text in ['Раз в 3 дня', 'Раз в 7 дней', 'Раз в  день'] and json.load(open('data/users.json'))[str(message.chat.id)]["last_message"] == 'Периодичность':
+    elif message.text in ['Раз в 30 дней', 'Раз в 14 дней', 'Раз в  день'] and json.load(open('data/users.json'))[str(message.chat.id)]["last_message"] == 'Периодичность':
         # print('барабан')
         noww = time.strftime("%M %H %d %m %Y", time.localtime())
         nowww = []
@@ -198,7 +213,11 @@ def handle_text(message):
         # print(users)
         with open('data/users.json', 'w') as file:
             json.dump(json.loads(str(users).replace("'", '"')), file)
-        print('барабашка')
+        # print('барабашка')
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
+        bot.send_message(message.chat.id, "Принято", reply_markup=um)
         # start_process()
 
     elif message.text == "Хочу подписаться":
@@ -212,7 +231,7 @@ def handle_text(message):
         # print('asd')
         # print(list(slezhka.all_teams.keys()))
         cntr_mas = list(cntrs[message.text.replace('⠀', '')])
-        print(cntr_mas)
+        # print(cntr_mas)
         # print(list(cntrs.items()))
         sup = []
         if len(cntr_mas) == 16:
@@ -234,8 +253,8 @@ def handle_text(message):
                         flag += 2
                 if len(timusi) - i == ceil(len(timusi) / 2):
                     um.row('⠀' + timusi[-1])
-            print(timusi)
-            print(sup)
+            # print(timusi)
+            # print(sup)
         elif len(cntr_mas) == 10:
             flag = 0
             um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -247,13 +266,13 @@ def handle_text(message):
                     timusi.remove(i)
             for i in range(ceil(len(timusi) / 2)):
                 if len(timusi) - i > ceil(len(timusi) / 2):
-                    print('asd')
+                    # print('asd')
                     um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
                     if not len(timusi) - flag < 2:
                         flag += 2
                 if len(timusi) - i == ceil(len(timusi) / 2):
                     um.row('⠀' + timusi[-1])
-            print(timusi)
+            # print(timusi)
 
         else:
             flag = 0
@@ -264,13 +283,13 @@ def handle_text(message):
                     timusi.remove(i)
             for i in range(ceil(len(timusi) / 2)):
                 if len(timusi) - i > ceil(len(timusi) / 2):
-                    print('asd')
+                    # print('asd')
                     um.row('⠀' + timusi[flag], '⠀' + timusi[flag + 1])
                     if not len(timusi) - flag < 2:
                         flag += 2
                 if len(timusi) - i == ceil(len(timusi) / 2):
                     um.row('⠀' + timusi[-1])
-            print(timusi, 'kebab')
+            # print(timusi, 'kebab')
         bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
     elif message.text.replace('⠀', '') in list(slezhka.all_teams.keys()) and not message.text in list(
             slezhka.all_teams.keys()):
@@ -400,13 +419,13 @@ def handle_text(message):
         bot.send_message(message.chat.id, "".join(koefs[message.text]), reply_markup=um)
         koefs = {}
     elif message.text == "СпортЧат":
-        print('volga')
+        # print('volga')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
     elif message.text == "Наши букмекеры":
-        print("frefherbfhebrfhberhfberibfiherbf")
+        # print("frefherbfhebrfhberhfberibfiherbf")
         komand_kontor = list(mas_kontor.keys())
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
@@ -416,7 +435,7 @@ def handle_text(message):
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
     elif message.text in mas_kontor:
-        print(mas_kontor[message.text])
+        # print(mas_kontor[message.text])
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
@@ -438,13 +457,13 @@ def handle_text(message):
         um.row("/start")
         bot.send_message(message.chat.id, "Выберите вид спорта, live матчи которого хотите отслеживать", reply_markup=um)
     elif message.text == "СпортЧат":
-        print('volga')
+        # print('volga')
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
     elif message.text == "Наши букмекеры":
-        print("frefherbfhebrfhberhfberibfiherbf")
+        # print("frefherbfhebrfhberhfberibfiherbf")
         komand_kontor = list(mas_kontor.keys())
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
@@ -454,7 +473,7 @@ def handle_text(message):
         um.row("/start")
         bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
     elif message.text in mas_kontor:
-        print(mas_kontor[message.text])
+        # print(mas_kontor[message.text])
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
@@ -464,6 +483,46 @@ def handle_text(message):
             caption=links[message.text],
             reply_markup=um
         )
+    elif any(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]] for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))) or message.text.replace('Отписаться от ', '') in slezhka.broken_needle:
+        with open('data/users.json') as f:
+            users = json.load(f)
+        index_of_team = 0
+        for j in [pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))]:
+            if j in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]]:
+                index_of_team = [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]].index(j)
+        users[str(message.chat.id)]["team"].remove(users[str(message.chat.id)]["team"][index_of_team])
+        # print(users[str(message.chat.id)]["team"])
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Подписки", "/start")
+        with open('data/users.json', 'w') as file:
+            json.dump(json.loads(str(users).replace("'", '"')), file)
+        with open('data/users.json') as f:
+            users = json.load(f)
+            # print(users[str(message.chat.id)]['team'])
+            if users[str(message.chat.id)]['team']:
+                flag = 0
+                for i in range(ceil(len(users[str(message.chat.id)]['team']) / 2)):
+                    if len(users[str(message.chat.id)]['team']) - i > ceil(
+                            len(users[str(message.chat.id)]['team']) / 2):
+                        print('asd')
+                        um.row('Отписаться от ' +
+                               pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect(
+                                   {'gent'}).word, 'Отписаться от ' +
+                               pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[
+                                   0].inflect({'gent'}).word)
+                        if not len(users[str(message.chat.id)]['team']) - flag < 2:
+                            flag += 2
+                    if len(users[str(message.chat.id)]['team']) - i == ceil(
+                            len(users[str(message.chat.id)]['team']) / 2):
+                        um.row(
+                            'Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[
+                                0].inflect({'gent'}).word)
+                bot.send_message(message.chat.id, f"Ваши подписки: {', '.join(users[str(message.chat.id)]['team'])}",
+                                 reply_markup=um)
+            else:
+                # print(1)
+                bot.send_message(message.chat.id, f"У вас больше нет подписок",
+                                 reply_markup=um)
     elif message.text == "Футбол" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
         um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -502,20 +561,24 @@ def handle_text(message):
                 um.row(i[0])
             um.row("/start", 'Матчи сейчас')
             bot.send_message(message.chat.id, "Матчи у вас в клавиатуре", reply_markup=um)
-    elif any(schet.football_live()[j][0][0] == message.text for j in [i for i in schet.football_live()]):
+    elif message.text in list(itertools.chain.from_iterable(list(itertools.chain.from_iterable([j for j in [i for i in list(schet.football_live().values())]])))):
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         print('лол')
+        bot.send_message(message.chat.id, 'загрузка...', reply_markup=um)
         um.row("/start", 'Матчи сейчас')
-        for i in schet.football_live():
-            if schet.football_live()[i][0][0] == message.text:
-                bot.send_message(message.chat.id, '\n'.join(schet.football_live()[i][0]), reply_markup=um)
-    elif any(schet.basketball_live()[j][0][0] == message.text for j in [i for i in schet.basketball_live()]):
+        for i in schet.football_live().values():
+            for j in i:
+                if message.text in j:
+                    bot.send_message(message.chat.id, '\n'.join(j), reply_markup=um)
+    elif message.text in list(itertools.chain.from_iterable(list(itertools.chain.from_iterable([j for j in [i for i in list(schet.basketball_live().values())]])))):
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         print('лол')
+        bot.send_message(message.chat.id, 'загрузка...', reply_markup=um)
         um.row("/start", 'Матчи сейчас')
-        for i in schet.basketball_live():
-            if schet.basketball_live()[i][0][0] == message.text:
-                bot.send_message(message.chat.id, '\n'.join(schet.basketball_live()[i][0]), reply_markup=um)
+        for i in schet.basketball_live().values():
+            for j in i:
+                if message.text in j:
+                    bot.send_message(message.chat.id, '\n'.join(j), reply_markup=um)
     else:
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
@@ -544,7 +607,7 @@ class Evr:
     @staticmethod
     def start_schedule(timeee, user_id):
         # print(json.load(open('data/users.json'))[str(user_id)]["period"])
-        schedule.every(int(json.load(open('data/users.json'))[str(user_id)]["period"])).days.do(Evr.send_to, user=user_id)
+        schedule.every(1).days.do(Evr.send_to, user=user_id)
 
         while True:
             # print(timeee)
@@ -561,7 +624,6 @@ class Evr:
             for i in slezhka.get_news_since_to(team, last_sent):
                 # print(i)
                 bot.send_message(int(user), i)
-        bot.send_message(int(user), 'smth')
         noww = time.strftime("%M %H %d %m %Y", time.localtime())
         nowww = []
         now = ' '
@@ -579,7 +641,7 @@ class Evr:
 
 
 if __name__ == '__main__':
-    # start_process()
+    start_process()
     # print('asddsaasddsa')
     try:
         bot.polling(none_stop=True)
