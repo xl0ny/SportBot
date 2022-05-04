@@ -11,6 +11,7 @@ import app
 import ast
 from math import ceil, floor
 import pymorphy2
+import pprint
 
 TOKEN = "5059019243:AAHvLlYGSfZudusSa6gpjthnlDbmcXQz_64"
 
@@ -49,7 +50,7 @@ links = {'https://winline.ru': 'Winline',
          'https://www.marathonbet.ru/su/betting/Football+-+11': 'МАРАФОН bet',
          'https://www.ligastavok.ru/?utm_referrer=https%3A%2F%2Fwww.google.com%2F': 'Лига ставок'
          }
-
+koefs = {}
 mas_kontor = photos
 mas_kontor = {mas_kontor[i]: i for i in mas_kontor}
 links = {links[i]: i for i in links}
@@ -96,8 +97,7 @@ def set_timer(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    # print(message)
-
+    global koefs
     if str(message.text) == json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] and message.text in slezhka.all_teams:
         with open('data/users.json') as f:
@@ -342,12 +342,46 @@ def handle_text(message):
     elif message.text == "Футбол":
         bot.send_message(message.from_user.id, "Загрузка...")
         for i in app.football():
-            print(i)
-            bot.send_message(message.from_user.id, i)
+            if i.count("\n") <= 1:
+                prom = i
+                koefs[prom] = []
+            else:
+                koefs[prom].append(i)
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Футбол", "Баскетбол", "Хоккей")
-        um.row("/start")
-        bot.send_message(message.chat.id, "Все матчи на сегодня выведены !", reply_markup=um)
+        for i in koefs:
+            um.row(i)
+        pprint.pprint(koefs)
+        bot.send_message(message.chat.id, "Выберите лигу", reply_markup=um)
+    elif message.text == "Баскетбол":
+        bot.send_message(message.from_user.id, "Загрузка...")
+        for i in app.basketball():
+            if i.count("\n") <= 1:
+                prom = i
+                koefs[prom] = []
+            else:
+                koefs[prom].append("".join(i))
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        for i in koefs:
+            um.row(i)
+        bot.send_message(message.chat.id, "Выберите лигу", reply_markup=um)
+    elif message.text == "Хоккей":
+        bot.send_message(message.from_user.id, "Загрузка...")
+        for i in app.hockey():
+            if i.count("\n") <= 1:
+                prom = i
+                koefs[prom] = []
+            else:
+                koefs[prom].append("".join(i))
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        for i in koefs:
+            um.row(i)
+        bot.send_message(message.chat.id, "Выберите лигу", reply_markup=um)
+    elif message.text in koefs:
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
+        bot.send_message(message.chat.id, "".join(koefs[message.text]), reply_markup=um)
+        koefs = {}
     elif message.text == "Обcуждение матча":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
@@ -364,10 +398,14 @@ def handle_text(message):
         bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
     elif message.text in mas_kontor:
         print(mas_kontor[message.text])
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Обcуждение матча", "Наши букмекеры")
         bot.send_photo(
             message.chat.id,
             mas_kontor[message.text],
-            caption=links[message.text]
+            caption=links[message.text],
+            reply_markup=um
         )
     else:
         pass
