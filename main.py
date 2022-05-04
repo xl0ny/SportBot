@@ -404,6 +404,29 @@ def handle_text(message):
         um.row("Футбол", "Баскетбол", "Хоккей")
         um.row("/start")
         bot.send_message(message.chat.id, "Выберите вид спорта, live матчи которого хотите отслеживать", reply_markup=um)
+    elif message.text == "СпортЧат":
+        print('volga')
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row("Коэффиценты сегодня", "Новости", "Подписки")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
+        bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
+    elif message.text == "Наши букмекеры":
+        print("frefherbfhebrfhberhfberibfiherbf")
+        komand_kontor = list(mas_kontor.keys())
+        um = telebot.types.ReplyKeyboardMarkup(True, True)
+        um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
+        um.row(komand_kontor[3], komand_kontor[4], komand_kontor[5])
+        um.row(komand_kontor[6], komand_kontor[7], komand_kontor[8])
+        um.row(komand_kontor[9], komand_kontor[10])
+        um.row("/start")
+        bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
+    elif message.text in mas_kontor:
+        print(mas_kontor[message.text])
+        bot.send_photo(
+            message.chat.id,
+            mas_kontor[message.text],
+            caption=links[message.text]
+        )
     elif message.text == "Футбол" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
         um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -442,29 +465,6 @@ def handle_text(message):
                 um.row(i[0])
             um.row("/start", 'Матчи сейчас')
             bot.send_message(message.chat.id, "Матчи у вас в клавиатуре", reply_markup=um)
-    elif message.text == "СпортЧат":
-        print('volga')
-        um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row("Коэффиценты сегодня", "Новости", "Подписки")
-        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
-        bot.send_message(message.chat.id, "Переходи в чат - https://t.me/+0ypQ6GBR53YxYjcy", reply_markup=um)
-    elif message.text == "Наши букмекеры":
-        print("frefherbfhebrfhberhfberibfiherbf")
-        komand_kontor = list(mas_kontor.keys())
-        um = telebot.types.ReplyKeyboardMarkup(True, True)
-        um.row(komand_kontor[0], komand_kontor[1], komand_kontor[2])
-        um.row(komand_kontor[3], komand_kontor[4], komand_kontor[5])
-        um.row(komand_kontor[6], komand_kontor[7], komand_kontor[8])
-        um.row(komand_kontor[9], komand_kontor[10])
-        um.row("/start")
-        bot.send_message(message.chat.id, "Выбери букмекера", reply_markup=um)
-    elif message.text in mas_kontor:
-        print(mas_kontor[message.text])
-        bot.send_photo(
-            message.chat.id,
-            mas_kontor[message.text],
-            caption=links[message.text]
-        )
     elif any(schet.football_live()[j][0][0] == message.text for j in [i for i in schet.football_live()]):
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         print('лол')
