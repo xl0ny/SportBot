@@ -236,7 +236,7 @@ def football():
         for j in ligaviy_dicktator_ligi:
             if team_one[i] in ligaviy_dicktator_ligi[j]:
                 if not j in said:
-                    mmas.append(j)
+                    ans.append(j)
                     said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
@@ -278,6 +278,7 @@ def hockey():
 
     # for i in films:
     #     print(i.findAll(class_='table-tournaments__title table-tournaments__title_big'))
+    # print(films)
     for i in films:
 
         for j in i.findAll(class_='table-tournaments__title table-tournaments__title_big'):
@@ -297,13 +298,11 @@ def hockey():
                     sami_kontori_pri_proigrishe.append(
                         re.split('№;333#|"', str(z).replace('(', '№;333#').replace(')', '№;333#'))[-3])
             for m, z in enumerate(j.findAll(class_='table-tournaments__team-name')):
-                # print(int(str(i).find(re.split('"|<|>', str(z))[-3])), int(str(i).find(liga[ligaviy_flag])), len(liga))
-                main_flag += 1
-                if ligaviy_flag + 1 < len(liga):
-                    # print(int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])))
-                    ligaviy_flag += 1
-                # print(liga[ligaviy_flag])
 
+                main_flag += 1
+                if int(str(i).find(liga[ligaviy_flag])) < int(str(i).find(re.split('"|<|>', str(z))[-3])):
+                    ligaviy_flag += 1
+                    # print(liga[ligaviy_flag])
                 if main_flag % 2 == 1:
                     team_one.append(re.split('"|<|>', str(z))[-3])
                 else:
@@ -336,7 +335,6 @@ def hockey():
     for m, j in enumerate(liga):
         ligaviy_dicktator[str(films).find(j)] = j
         # print(ligaviy_dicktator[str(films).find(j)])
-    # print(ligaviy_dicktator)
     for i in team_one:
         tima_num = 0
         flyaga = 0
@@ -355,31 +353,29 @@ def hockey():
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]] = []
                     ligaviy_dicktator_ligi[ligaviy_dicktator[tima_num]].append(i)
                     break
-    # print(ligaviy_dicktator_ligi)
     # print('Европа. Лига чемпионов УЕФА' in ligaviy_dicktator_ligi, ligaviy_dicktator_ligi)
     said = []
+    ans = []
     for i in range(len(team_one)):
         # print(team_one[i])
         pobeda = str(sami_kontori_pri_pobede[i]).replace('"', '').replace("'", "")
         nichya = sami_kontori_pri_nichye[i].replace('"', '').replace("'", "")
         proigrish = sami_kontori_pri_proigrishe[i].replace('"', '').replace("'", "")
-        if len(liga) > 1:
-            for j in ligaviy_dicktator_ligi:
-                if team_one[i] in ligaviy_dicktator_ligi[j]:
-                    if not j in said:
-                        print(j)
-                        said.append(j)
-        else:
-            if not liga[0] in said:
-                print(liga[0])
-                said.append(liga[0])
+        mmas = []
+
+        for j in ligaviy_dicktator_ligi:
+            if team_one[i] in ligaviy_dicktator_ligi[j]:
+                if not j in said:
+                    ans.append(j)
+                    said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
-        print(team_one[i] + " : " + team_two[i], main_coefficent[i])
-
-        print(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} ')
-        print(f'Лучшая контора для ставки на ничью: {dicktator[nichya]}')
-        print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
+        mmas.append(team_one[i] + " : " + team_two[i])
+        mmas.append(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} - {main_coefficent[i][0]}')
+        mmas.append(f'Лучшая контора для ставки на ничью: {dicktator[nichya]} - {main_coefficent[i][1]}')
+        mmas.append(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]} - {main_coefficent[i][2]}\n\n\n\n')
+        ans.append("\n\n".join(mmas))
+    return ans
 
 
 def basketball():
@@ -492,30 +488,30 @@ def basketball():
     # print(ligaviy_dicktator_ligi)
     # print('Европа. Лига чемпионов УЕФА' in ligaviy_dicktator_ligi, ligaviy_dicktator_ligi)
     said = []
+    ans = []
     for i in range(len(team_one)):
         # print(team_one[i])
         pobeda = str(sami_kontori_pri_pobede[i]).replace('"', '').replace("'", "")
         nichya = sami_kontori_pri_nichye[i].replace('"', '').replace("'", "")
         proigrish = sami_kontori_pri_proigrishe[i].replace('"', '').replace("'", "")
-        if len(liga) > 1:
-            for j in ligaviy_dicktator_ligi:
-                if team_one[i] in ligaviy_dicktator_ligi[j]:
-                    if not j in said:
-                        # print(j)
-                        said.append(j)
-        else:
-            if not liga[0] in said:
-                # print(liga[0])
-                said.append(liga[0])
+        mmas = []
+
+        for j in ligaviy_dicktator_ligi:
+            if team_one[i] in ligaviy_dicktator_ligi[j]:
+                if not j in said:
+                    ans.append(j)
+                    said.append(j)
 
         # print(pobeda == 'https://odds.ru/upload/media/default/0001/58/thumb_57363_default_big.svg')
-        print(team_one[i] + " : " + team_two[i], main_coefficent[i])
-
-        print(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} ')
-        print(f'Лучшая контора для ставки на ничью: {dicktator[nichya]}')
-        print(f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]}\n\n\n\n')
+        mmas.append(team_one[i] + " : " + team_two[i])
+        mmas.append(f'Лучшая контора для ставки на {team_one[i]}: {dicktator[pobeda]} - {main_coefficent[i][0]}')
+        mmas.append(f'Лучшая контора для ставки на ничью: {dicktator[nichya]} - {main_coefficent[i][1]}')
+        mmas.append(
+            f'Лучшая контора для ставки на {team_two[i]}: {dicktator[proigrish]} - {main_coefficent[i][2]}\n\n\n\n')
+        ans.append("\n\n".join(mmas))
+    return ans
 
 
 # print(football())
-# hockey()
-# basketball()
+# print(hockey())
+# print(basketball())
