@@ -106,7 +106,7 @@ def football_live():
     if not flag == 0:
         return result
     else:
-        return 'нет активных матчей'
+        return result
 
 
 def hockey_live():
@@ -187,7 +187,7 @@ def hockey_live():
     if not flag == 0:
         return result
     else:
-        return 'нет активных матчей'
+        return result
 
 
 def basketball_live():
@@ -269,7 +269,7 @@ def basketball_live():
     if not flag == 0:
         return result
     else:
-        return 'нет активных матчей'
+        return result
 
 # for i in football_live():
 #     print(football_live()[i][0][0])

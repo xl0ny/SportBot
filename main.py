@@ -145,13 +145,13 @@ def handle_text(message):
         um.row("Франция", "Голландия", "Италия")
         um.row("Португалия", "Швейцария", "Россия")
         um.row("/start")
-        bot.send_message(message.chat.id, "Выбери страну", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите страну", reply_markup=um)
     elif message.text == "Подписки":
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Мои подписки", "Хочу подписаться")
         um.row("Периодичность")
         um.row("/start")
-        bot.send_message(message.chat.id, "Выбери действие", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите действие", reply_markup=um)
     elif message.text == "Мои подписки":
         # usas = []
         um = telebot.types.ReplyKeyboardMarkup(True, True)
@@ -198,7 +198,7 @@ def handle_text(message):
         um.row(
             f"Оставить текущее (Раз в {str(json.load(open('data/users.json'))[str(message.chat.id)]['period']) if not str(json.load(open('data/users.json'))[str(message.chat.id)]['period']) == '1' else ''} {str(pymorphy2.MorphAnalyzer().parse('день')[0].make_agree_with_number(int(str(json.load(open('data/users.json'))[str(message.chat.id)]['period']))).word)})")
         um.row("/start")
-        bot.send_message(message.chat.id, "Выбери периодичность прихода новостей", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите периодичность прихода новостей", reply_markup=um)
     elif message.text in ['Раз в 30 дней', 'Раз в 14 дней', 'Раз в  день'] and json.load(open('data/users.json'))[str(message.chat.id)]["last_message"] == 'Периодичность':
         # print('барабан')
         noww = time.strftime("%M %H %d %m %Y", time.localtime())
@@ -234,7 +234,7 @@ def handle_text(message):
         um.row("⠀Франция", "⠀Голландия", "⠀Италия")
         um.row("⠀Португалия", "⠀Швейцария", "⠀Россия")
         um.row("/start")
-        bot.send_message(message.chat.id, "Выбери страну", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите страну", reply_markup=um)
     elif message.text.replace('⠀', '') in cntrs and not message.text in cntrs:
         # print('asd')
         # print(list(slezhka.all_teams.keys()))
@@ -298,7 +298,7 @@ def handle_text(message):
                 if len(timusi) - i == ceil(len(timusi) / 2):
                     um.row('⠀' + timusi[-1])
             # print(timusi, 'kebab')
-        bot.send_message(message.chat.id, "Выбери команду", reply_markup=um)
+        bot.send_message(message.chat.id, "Выберите команду", reply_markup=um)
     elif message.text.replace('⠀', '') in list(slezhka.all_teams.keys()) and not message.text in list(
             slezhka.all_teams.keys()):
         if not json.load(open('data/users.json'))[str(message.chat.id)]["last_sent_time"]:
@@ -418,12 +418,12 @@ def handle_text(message):
         else:
             um = telebot.types.ReplyKeyboardMarkup(True, True)
             um.row("Коэффиценты сегодня", "Новости", "Подписки")
-            um.row("Обcуждение матча", "СпортЧат", "Наши букмекеры")
+            um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
             bot.send_message(message.chat.id, "Сегодня матчей нет", reply_markup=um)
     elif message.text in koefs:
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
-        um.row("Обcуждение матча", "СпортЧат", "Наши букмекеры")
+        um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, "".join(koefs[message.text]), reply_markup=um)
         koefs = {}
     elif message.text == "СпортЧат":
@@ -545,7 +545,7 @@ def handle_text(message):
     elif message.text == "Футбол" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        if not schet.football_live() == 'нет активных матчей':
+        if schet.football_live():
             for i in schet.football_live():
                 um.row(i)
             um.row("/start")
@@ -564,7 +564,7 @@ def handle_text(message):
     elif message.text == "Баскетбол" and json.load(open('data/users.json'))[str(message.chat.id)][
         "last_message"] == 'Матчи сейчас':
         um = telebot.types.ReplyKeyboardMarkup(True, True)
-        if not schet.basketball_live() == 'нет активных матчей':
+        if schet.basketball_live():
             for i in schet.basketball_live():
                 um.row(i)
             um.row("/start")
@@ -600,6 +600,7 @@ def handle_text(message):
                     bot.send_message(message.chat.id, '\n'.join(j), reply_markup=um)
     else:
         um = telebot.types.ReplyKeyboardMarkup(True, True)
+        print('ddos')
         um.row("Коэффиценты сегодня", "Новости", "Подписки")
         um.row("Матчи сейчас", "СпортЧат", "Наши букмекеры")
         bot.send_message(message.chat.id, 'К сожалению у меня нет такой команды(', reply_markup=um)
