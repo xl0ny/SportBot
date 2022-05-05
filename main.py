@@ -164,13 +164,21 @@ def handle_text(message):
                 for i in range(ceil(len(users[str(message.chat.id)]['team']) / 2)):
                     if len(users[str(message.chat.id)]['team']) - i > ceil(len(users[str(message.chat.id)]['team']) / 2):
                         # print('asd')
-                        um.row('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word, 'Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word)
+                        pervoe = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word
+                        vtoroe = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word
+                        pervoe = pervoe if not pervoe in slezhka.broken_needle else users[str(message.chat.id)]['team'][flag]
+                        vtoroe = vtoroe if not vtoroe in slezhka.broken_needle else users[str(message.chat.id)]['team'][flag + 1]
+                        um.row('Отписаться от ' + pervoe, 'Отписаться от ' + vtoroe)
                         # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word)
                         # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word)
                         if not len(users[str(message.chat.id)]['team']) - flag < 2:
                             flag += 2
                     if len(users[str(message.chat.id)]['team']) - i == ceil(len(users[str(message.chat.id)]['team']) / 2):
-                        um.row('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect({'gent'}).word)
+                        tretie = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect(
+                            {'gent'}).word
+                        tretie = tretie if not tretie in slezhka.broken_needle else users[str(message.chat.id)]['team'][
+                            -1]
+                        um.row('Отписаться от ' + tretie)
                         # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect({'gent'}).word)
                 bot.send_message(message.chat.id, f"Ваши подписки: {', '.join(users[str(message.chat.id)]['team'])}",
                                  reply_markup=um)
@@ -483,14 +491,18 @@ def handle_text(message):
             caption=links[message.text],
             reply_markup=um
         )
-    elif any(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]] for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))) or message.text.replace('Отписаться от ', '') in slezhka.broken_needle:
+    elif any(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]] for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))) or message.text.replace('Отписаться от ', '') in slezhka.broken_needle or message.text.replace('Отписаться от ', '') in users[str(message.chat.id)]["team"]:
         with open('data/users.json') as f:
             users = json.load(f)
         index_of_team = 0
-        for j in [pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))]:
-            if j in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]]:
-                index_of_team = [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]].index(j)
-        users[str(message.chat.id)]["team"].remove(users[str(message.chat.id)]["team"][index_of_team])
+        if not message.text.replace('Отписаться от ', '') in users[str(message.chat.id)]["team"]:
+            for j in [pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))[i].normal_form for i in range(len(pymorphy2.MorphAnalyzer().parse(message.text.replace('Отписаться от ', ''))))]:
+                if j in [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]]:
+                    index_of_team = [i.lower() for i in json.load(open('data/users.json'))[str(message.chat.id)]["team"]].index(j)
+            users[str(message.chat.id)]["team"].remove(users[str(message.chat.id)]["team"][index_of_team])
+        else:
+            users[str(message.chat.id)]["team"].remove(message.text.replace('Отписаться от ', ''))
+        # users[str(message.chat.id)]["team"].remove(users[str(message.chat.id)]["team"][index_of_team])
         # print(users[str(message.chat.id)]["team"])
         um = telebot.types.ReplyKeyboardMarkup(True, True)
         um.row("Подписки", "/start")
@@ -502,21 +514,28 @@ def handle_text(message):
             if users[str(message.chat.id)]['team']:
                 flag = 0
                 for i in range(ceil(len(users[str(message.chat.id)]['team']) / 2)):
-                    if len(users[str(message.chat.id)]['team']) - i > ceil(
-                            len(users[str(message.chat.id)]['team']) / 2):
-                        print('asd')
-                        um.row('Отписаться от ' +
-                               pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect(
-                                   {'gent'}).word, 'Отписаться от ' +
-                               pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[
-                                   0].inflect({'gent'}).word)
-                        if not len(users[str(message.chat.id)]['team']) - flag < 2:
-                            flag += 2
-                    if len(users[str(message.chat.id)]['team']) - i == ceil(
-                            len(users[str(message.chat.id)]['team']) / 2):
-                        um.row(
-                            'Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[
-                                0].inflect({'gent'}).word)
+                    for i in range(ceil(len(users[str(message.chat.id)]['team']) / 2)):
+                        if len(users[str(message.chat.id)]['team']) - i > ceil(
+                                len(users[str(message.chat.id)]['team']) / 2):
+                            # print('asd')
+                            pervoe = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[
+                                0].inflect({'gent'}).word
+                            vtoroe = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[
+                                0].inflect({'gent'}).word
+                            pervoe = pervoe if not pervoe in slezhka.broken_needle else \
+                            users[str(message.chat.id)]['team'][flag]
+                            vtoroe = vtoroe if not vtoroe in slezhka.broken_needle else \
+                            users[str(message.chat.id)]['team'][flag + 1]
+                            um.row('Отписаться от ' + pervoe, 'Отписаться от ' + vtoroe)
+                            # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag])[0].inflect({'gent'}).word)
+                            # usas.append('Отписаться от ' + pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][flag + 1])[0].inflect({'gent'}).word)
+                            if not len(users[str(message.chat.id)]['team']) - flag < 2:
+                                flag += 2
+                        if len(users[str(message.chat.id)]['team']) - i == ceil(
+                                len(users[str(message.chat.id)]['team']) / 2):
+                            tretie = pymorphy2.MorphAnalyzer().parse(users[str(message.chat.id)]['team'][-1])[0].inflect({'gent'}).word
+                            tretie = tretie if not tretie in slezhka.broken_needle else users[str(message.chat.id)]['team'][-1]
+                            um.row('Отписаться от ' + tretie)
                 bot.send_message(message.chat.id, f"Ваши подписки: {', '.join(users[str(message.chat.id)]['team'])}",
                                  reply_markup=um)
             else:
